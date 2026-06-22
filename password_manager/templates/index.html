@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">🎲 Генератор паролей</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('generate') }}">
+                    <div class="mb-3">
+                        <label for="length" class="form-label">Длина пароля</label>
+                        <input type="number" class="form-control" id="length" name="length" value="12" min="4" max="50">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="use_digits" name="use_digits" checked>
+                        <label class="form-check-label" for="use_digits">Использовать цифры</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="use_special" name="use_special" checked>
+                        <label class="form-check-label" for="use_special">Использовать спецсимволы</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Сгенерировать пароль</button>
+                </form>
+
+                {% if generated_password %}
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h5>Сгенерированный пароль:</h5>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="generatedPassword" value="{{ generated_password }}" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyPassword()">📋 Копировать</button>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{{ url_for('add_password') }}?site=&login=&password={{ generated_password }}" class="btn btn-success btn-sm">
+                            💾 Сохранить пароль
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📊 Статистика</h5>
+            </div>
+            <div class="card-body">
+                <p>Всего сохранённых паролей: <span class="badge bg-primary">{{ passwords|length if passwords else 0 }}</span></p>
+                <a href="{{ url_for('list_passwords') }}" class="btn btn-outline-primary btn-sm">Просмотреть все</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyPassword() {
+    const input = document.getElementById('generatedPassword');
+    input.select();
+    document.execCommand('copy');
+    alert('Пароль скопирован в буфер обмена!');
+}
+</script>
+{% endblock %}
